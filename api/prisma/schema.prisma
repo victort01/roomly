@@ -1,0 +1,135 @@
+// This is your Prisma schema file,
+// learn more about it in the docs: https://pris.ly/d/prisma-schema
+
+// Looking for ways to speed up your queries, or scale easily with your serverless or edge functions?
+// Try Prisma Accelerate: https://pris.ly/cli/accelerate-init
+generator client {
+  provider = "prisma-client-js"
+  output   = "../src/generated/prisma"
+}
+
+datasource db {
+  provider = "postgresql"
+  url      = env("DATABASE_URL")
+}
+
+
+model Funcionario {
+  id        Int        @id @default(autoincrement())
+  nome      String
+  email     String     @unique
+  senha     String // IMPORTANTE: em produção, sempre armazenar hash
+  telefone  String?
+  role      Role       @default(RECEPCIONISTA)
+  createdAt DateTime   @default(now())
+  updatedAt DateTime   @updatedAt
+
+  reservas  Reserva[]
+
+  @@map("funcionarios")
+}
+
+model Hospede {
+  id         Int        @id @default(autoincrement())
+  nome       String
+  email      String?    @unique
+  telefone   String?
+  documento  String
+  createdAt  DateTime   @default(now())
+  updatedAt  DateTime   @updatedAt
+
+  reservas   Reserva[]
+
+  @@map("hospedes")
+}
+
+model TipoQuarto {
+  id         Int        @id @default(autoincrement())
+  nome       String
+  descricao  String?
+  capacidade Int
+  precoBase  Float
+
+  quartos    Quarto[]
+
+  @@map("tipo_quarto")
+}
+
+model Quarto {
+  id        Int           @id @default(autoincrement())
+  numero    String        @unique
+  tipoId    Int
+  status    StatusQuarto  @default(DISPONIVEL)
+
+  tipo      TipoQuarto    @relation(fields: [tipoId], references: [id])
+  reservas  Reserva[]
+
+  @@map("quartos")
+}
+
+model Reserva {
+  id            Int            @id @default(autoincrement())
+  hospedeId     Int
+  quartoId      Int
+  funcionarioId Int?
+  checkIn       DateTime
+  checkOut      DateTime
+  total         Float?
+  status        StatusReserva @default(PENDENTE)
+  createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
+
+  hospede       Hospede       @relation(fields: [hospedeId], references: [id])
+  quarto        Quarto        @relation(fields: [quartoId], references: [id])
+  funcionario   Funcionario?  @relation(fields: [funcionarioId], references: [id])
+  pagamento     Pagamento?
+
+  @@map("reservas")
+}
+
+model Pagamento {
+  id         Int              @id @default(autoincrement())
+  reservaId  Int              @unique
+  valor      Float
+  metodo     MetodoPagamento
+  status     StatusPagamento @default(PENDENTE)
+  data       DateTime?
+
+  reserva    Reserva          @relation(fields: [reservaId], references: [id])
+
+  @@map("pagamentos")
+}
+
+
+enum Role {
+  ADMIN
+  GERENTE
+  RECEPCIONISTA
+}
+
+enum StatusQuarto {
+  DISPONIVEL
+  OCUPADO
+  MANUTENCAO
+  LIMPEZA
+}
+
+enum StatusReserva {
+  PENDENTE
+  CONFIRMADA
+  CHECKED_IN
+  CHECKED_OUT
+  CANCELADA
+}
+
+enum MetodoPagamento {
+  CARTAO
+  PIX
+  DINHEIRO
+}
+
+enum StatusPagamento {
+  PENDENTE
+  PAGO
+  FALHOU
+}
