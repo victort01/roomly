@@ -126,8 +126,10 @@ exports.Prisma.FuncionarioScalarFieldEnum = {
   nome: 'nome',
   email: 'email',
   senha: 'senha',
+  telefone: 'telefone',
   role: 'role',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.HospedeScalarFieldEnum = {
@@ -136,7 +138,8 @@ exports.Prisma.HospedeScalarFieldEnum = {
   email: 'email',
   telefone: 'telefone',
   documento: 'documento',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.TipoQuartoScalarFieldEnum = {
@@ -163,7 +166,8 @@ exports.Prisma.ReservaScalarFieldEnum = {
   checkOut: 'checkOut',
   total: 'total',
   status: 'status',
-  createdAt: 'createdAt'
+  createdAt: 'createdAt',
+  updatedAt: 'updatedAt'
 };
 
 exports.Prisma.PagamentoScalarFieldEnum = {
@@ -198,8 +202,8 @@ exports.Role = exports.$Enums.Role = {
 exports.StatusQuarto = exports.$Enums.StatusQuarto = {
   DISPONIVEL: 'DISPONIVEL',
   OCUPADO: 'OCUPADO',
-  LIMPEZA: 'LIMPEZA',
-  MANUTENCAO: 'MANUTENCAO'
+  MANUTENCAO: 'MANUTENCAO',
+  LIMPEZA: 'LIMPEZA'
 };
 
 exports.StatusReserva = exports.$Enums.StatusReserva = {

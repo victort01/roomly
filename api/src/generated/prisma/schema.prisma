@@ -17,11 +17,15 @@ model Funcionario {
   id        Int      @id @default(autoincrement())
   nome      String
   email     String   @unique
-  senha     String
+  senha     String // IMPORTANTE: em produção, sempre armazenar hash
+  telefone  String?
   role      Role     @default(RECEPCIONISTA)
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   reservas Reserva[]
+
+  @@map("funcionarios")
 }
 
 model Hospede {
@@ -29,10 +33,13 @@ model Hospede {
   nome      String
   email     String?  @unique
   telefone  String?
-  documento String?
+  documento String
   createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
 
   reservas Reserva[]
+
+  @@map("hospedes")
 }
 
 model TipoQuarto {
@@ -43,6 +50,8 @@ model TipoQuarto {
   precoBase  Float
 
   quartos Quarto[]
+
+  @@map("tipo_quarto")
 }
 
 model Quarto {
@@ -53,6 +62,8 @@ model Quarto {
 
   tipo     TipoQuarto @relation(fields: [tipoId], references: [id])
   reservas Reserva[]
+
+  @@map("quartos")
 }
 
 model Reserva {
@@ -65,11 +76,14 @@ model Reserva {
   total         Float?
   status        StatusReserva @default(PENDENTE)
   createdAt     DateTime      @default(now())
+  updatedAt     DateTime      @updatedAt
 
   hospede     Hospede      @relation(fields: [hospedeId], references: [id])
   quarto      Quarto       @relation(fields: [quartoId], references: [id])
   funcionario Funcionario? @relation(fields: [funcionarioId], references: [id])
   pagamento   Pagamento?
+
+  @@map("reservas")
 }
 
 model Pagamento {
@@ -81,6 +95,8 @@ model Pagamento {
   data      DateTime?
 
   reserva Reserva @relation(fields: [reservaId], references: [id])
+
+  @@map("pagamentos")
 }
 
 enum Role {
@@ -92,8 +108,8 @@ enum Role {
 enum StatusQuarto {
   DISPONIVEL
   OCUPADO
-  LIMPEZA
   MANUTENCAO
+  LIMPEZA
 }
 
 enum StatusReserva {
