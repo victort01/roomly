@@ -20,7 +20,7 @@ model Funcionario {
   email     String     @unique
   senha     String // IMPORTANTE: em produção, sempre armazenar hash
   telefone  String?
-  role      Role       @default(RECEPCIONISTA)
+  role      Role
   createdAt DateTime   @default(now())
   updatedAt DateTime   @updatedAt
 
@@ -33,8 +33,8 @@ model Hospede {
   id         Int        @id @default(autoincrement())
   nome       String
   email      String?    @unique
-  telefone   String?
-  documento  String
+  telefone   String?    @unique
+  documento  String    @unique  
   createdAt  DateTime   @default(now())
   updatedAt  DateTime   @updatedAt
 
@@ -71,7 +71,7 @@ model Reserva {
   id            Int            @id @default(autoincrement())
   hospedeId     Int
   quartoId      Int
-  funcionarioId Int?
+  funcionarioId Int
   checkIn       DateTime
   checkOut      DateTime
   total         Float?
@@ -81,25 +81,10 @@ model Reserva {
 
   hospede       Hospede       @relation(fields: [hospedeId], references: [id])
   quarto        Quarto        @relation(fields: [quartoId], references: [id])
-  funcionario   Funcionario?  @relation(fields: [funcionarioId], references: [id])
-  pagamento     Pagamento?
+  funcionario   Funcionario   @relation(fields: [funcionarioId], references: [id])
 
   @@map("reservas")
 }
-
-model Pagamento {
-  id         Int              @id @default(autoincrement())
-  reservaId  Int              @unique
-  valor      Float
-  metodo     MetodoPagamento
-  status     StatusPagamento @default(PENDENTE)
-  data       DateTime?
-
-  reserva    Reserva          @relation(fields: [reservaId], references: [id])
-
-  @@map("pagamentos")
-}
-
 
 enum Role {
   ADMIN
@@ -120,16 +105,4 @@ enum StatusReserva {
   CHECKED_IN
   CHECKED_OUT
   CANCELADA
-}
-
-enum MetodoPagamento {
-  CARTAO
-  PIX
-  DINHEIRO
-}
-
-enum StatusPagamento {
-  PENDENTE
-  PAGO
-  FALHOU
 }

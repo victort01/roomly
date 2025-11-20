@@ -3,11 +3,8 @@ import { prisma } from "../database/prisma";
 import { 
   Role, 
   StatusQuarto, 
-  StatusReserva, 
-  MetodoPagamento, 
-  StatusPagamento 
+  StatusReserva
 } from "../generated/prisma";
-
 
 async function seed() {
   console.log("🌱 Iniciando seed do banco...\n");
@@ -17,6 +14,7 @@ async function seed() {
     // FUNCIONÁRIOS
     // ======================================================
     console.log("👨‍💼 Criando funcionários...");
+
     const funcionariosData = [
       { nome: "Mariana Alves", email: "mariana@hotel.com", senha: "senha123", role: Role.ADMIN },
       { nome: "Fernando Gomes", email: "fernando@hotel.com", senha: "senha123", role: Role.GERENTE },
@@ -36,12 +34,15 @@ async function seed() {
         else console.error(`  ❌ Erro ao criar ${f.nome}: ${error.message}`);
       }
     }
+
     console.log(`📊 Total de funcionários criados: ${funcionariosCount}\n`);
+
 
     // ======================================================
     // HÓSPEDES
     // ======================================================
     console.log("👥 Criando hóspedes...");
+
     const hospedesData = [
       { nome: "Lucas Ferreira", email: "lucasf@gmail.com", telefone: "11984563210", documento: "345.123.678-90" },
       { nome: "Ana Júlia Martins", email: "anajmartins@gmail.com", telefone: "11988776655", documento: "123.456.789-00" },
@@ -62,12 +63,15 @@ async function seed() {
         else console.error(`  ❌ Erro ao criar ${h.nome}: ${error.message}`);
       }
     }
+
     console.log(`📊 Total de hóspedes criados: ${hospedesCount}\n`);
+
 
     // ======================================================
     // TIPOS DE QUARTO
     // ======================================================
     console.log("🏨 Criando tipos de quarto...");
+
     const tiposData = [
       { nome: "Econômico", descricao: "Quarto compacto e funcional", capacidade: 1, precoBase: 120 },
       { nome: "Luxo", descricao: "Quarto espaçoso com varanda e vista lateral", capacidade: 3, precoBase: 350 },
@@ -88,20 +92,27 @@ async function seed() {
         else console.error(`  ❌ Erro ao criar ${t.nome}: ${error.message}`);
       }
     }
+
     console.log(`📊 Total de tipos de quarto criados: ${tiposCount}\n`);
 
     const tiposCriados = await prisma.tipoQuarto.findMany();
+
 
     // ======================================================
     // QUARTOS
     // ======================================================
     console.log("🛏️  Criando quartos...");
+
     const quartosData: any[] = [];
     let roomNumber = 101;
 
     for (const tipo of tiposCriados) {
       for (let i = 0; i < 5; i++) {
-        quartosData.push({ numero: `${roomNumber}`, tipoId: tipo.id, status: StatusQuarto.DISPONIVEL });
+        quartosData.push({
+          numero: `${roomNumber}`,
+          tipoId: tipo.id,
+          status: StatusQuarto.DISPONIVEL
+        });
         roomNumber++;
       }
     }
@@ -116,66 +127,50 @@ async function seed() {
         else console.error(`  ❌ Erro ao criar quarto ${q.numero}: ${error.message}`);
       }
     }
+
     console.log(`📊 Total de quartos criados: ${quartosCount}\n`);
 
+
     // ======================================================
-    // RESERVAS
+    // RESERVAS (sem pagamento)
     // ======================================================
-const funcionariosList = await prisma.funcionario.findMany();
-const hospedesList = await prisma.hospede.findMany();
-const quartosList = await prisma.quarto.findMany({
-  include: {
-    tipo: true, // inclui TipoQuarto para poder acessar precoBase
-  },
-});
+    console.log("📅 Criando reservas...");
 
-const reservasData: any[] = [];
+    const funcionariosList = await prisma.funcionario.findMany();
+    const hospedesList = await prisma.hospede.findMany();
+    const quartosList = await prisma.quarto.findMany({ include: { tipo: true } });
 
-for (let i = 0; i < hospedesList.length; i++) {
-  const hospede = hospedesList[i];
-  const quarto = quartosList[i]; // 1:1 para simplificar
-  const funcionario = funcionariosList[i % funcionariosList.length];
+    const reservasData: any[] = [];
 
-  const checkIn = new Date(2025, 0, 5 + i);
-  const checkOut = new Date(2025, 0, 6 + i);
+    for (let i = 0; i < hospedesList.length; i++) {
+      const hospede = hospedesList[i];
+      const quarto = quartosList[i];
+      const funcionario = funcionariosList[i % funcionariosList.length];
 
-  reservasData.push({
-    hospedeId: hospede.id,
-    quartoId: quarto.id,
-    funcionarioId: funcionario.id,
-    checkIn,
-    checkOut,
-    total: quarto.tipo.precoBase, // ✅ agora funciona
-    status: StatusReserva.CONFIRMADA,
-  });
-}
+      reservasData.push({
+        hospedeId: hospede.id,
+        quartoId: quarto.id,
+        funcionarioId: funcionario.id,
+        checkIn: new Date(2025, 0, 5 + i),
+        checkOut: new Date(2025, 0, 6 + i),
+        total: quarto.tipo.precoBase,
+        status: StatusReserva.CONFIRMADA
+      });
+    }
 
-// Criar reservas no banco
-let reservasCount = 0;
-for (const reserva of reservasData) {
-  try {
-    await prisma.reserva.create({
-      data: {
-        ...reserva,
-        pagamento: {
-          create: {
-            valor: reserva.total,
-            metodo: MetodoPagamento.CARTAO,
-            status: StatusPagamento.PAGO,
-            data: new Date(),
-          },
-        },
-      },
-    });
-    reservasCount++;
-    console.log(`  ✅ Reserva do hóspedeId ${reserva.hospedeId} no quarto ${reserva.quartoId}`);
-  } catch (error: any) {
-    if (error.code === "P2002") console.log(`  ⚠️  Reserva já existe`);
-    else console.error(`  ❌ Erro ao criar reserva: ${error.message}`);
-  }
-}
+    let reservasCount = 0;
+    for (const reserva of reservasData) {
+      try {
+        await prisma.reserva.create({ data: reserva });
+        reservasCount++;
+      } catch (error: any) {
+        if (error.code === "P2002") console.log(`  ⚠️  Reserva duplicada`);
+        else console.error(`  ❌ Erro ao criar reserva: ${error.message}`);
+      }
+    }
 
-console.log(`📊 Total de reservas criadas: ${reservasCount}\n`);
+    console.log(`📊 Total de reservas criadas: ${reservasCount}\n`);
+
 
     // ======================================================
     // RESUMO FINAL

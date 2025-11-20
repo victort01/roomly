@@ -170,15 +170,6 @@ exports.Prisma.ReservaScalarFieldEnum = {
   updatedAt: 'updatedAt'
 };
 
-exports.Prisma.PagamentoScalarFieldEnum = {
-  id: 'id',
-  reservaId: 'reservaId',
-  valor: 'valor',
-  metodo: 'metodo',
-  status: 'status',
-  data: 'data'
-};
-
 exports.Prisma.SortOrder = {
   asc: 'asc',
   desc: 'desc'
@@ -214,25 +205,12 @@ exports.StatusReserva = exports.$Enums.StatusReserva = {
   CANCELADA: 'CANCELADA'
 };
 
-exports.MetodoPagamento = exports.$Enums.MetodoPagamento = {
-  CARTAO: 'CARTAO',
-  PIX: 'PIX',
-  DINHEIRO: 'DINHEIRO'
-};
-
-exports.StatusPagamento = exports.$Enums.StatusPagamento = {
-  PENDENTE: 'PENDENTE',
-  PAGO: 'PAGO',
-  FALHOU: 'FALHOU'
-};
-
 exports.Prisma.ModelName = {
   Funcionario: 'Funcionario',
   Hospede: 'Hospede',
   TipoQuarto: 'TipoQuarto',
   Quarto: 'Quarto',
-  Reserva: 'Reserva',
-  Pagamento: 'Pagamento'
+  Reserva: 'Reserva'
 };
 
 /**
