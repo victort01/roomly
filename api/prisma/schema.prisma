@@ -54,7 +54,7 @@ model TipoQuarto {
 
   @@map("tipo_quarto")
 }
-
+  
 model Quarto {
   id        Int           @id @default(autoincrement())
   numero    String        @unique

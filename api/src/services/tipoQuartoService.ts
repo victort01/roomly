@@ -14,7 +14,7 @@ export const getAll = async (): Promise<TipoQuarto[]> => {
     return prisma.tipoQuarto.findMany();
 };
 
-export const getBydId = async (id:number): Promise<TipoQuarto | null> => {
+export const getById = async (id:number): Promise<TipoQuarto | null> => {
     return prisma.tipoQuarto.findUnique({where: { id }});
 };
 
