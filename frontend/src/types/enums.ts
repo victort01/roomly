@@ -1,0 +1,20 @@
+export enum Role {
+  ADMIN = "ADMIN",
+  GERENTE = "GERENTE",
+  RECEPCIONISTA = "RECEPCIONISTA",
+}
+
+export enum StatusQuarto {
+  DISPONIVEL = "DISPONIVEL",
+  OCUPADO = "OCUPADO",
+  MANUTENCAO = "MANUTENCAO",
+  LIMPEZA = "LIMPEZA",
+}
+
+export enum StatusReserva {
+  PENDENTE = "PENDENTE",
+  CONFIRMADA = "CONFIRMADA",
+  CHECKED_IN = "CHECKED_IN",
+  CHECKED_OUT = "CHECKED_OUT",
+  CANCELADA = "CANCELADA",
+}
