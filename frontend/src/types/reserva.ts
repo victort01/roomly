@@ -12,7 +12,7 @@ export interface Reserva {
     checkOut: string;
     total?: number | null;
     status: StatusReserva;
-    cretaedAt: string;
+    createddAt: string;
     updatedAt: string;
 
     hospede?: Hospede;

@@ -1,5 +1,5 @@
 import React from "react";
-import { IconButton, Tooltip, Paper, Typography } from "@mui/material";
+import { IconButton, Tooltip, Paper } from "@mui/material";
 import { Brightness4, Brightness7 } from "@mui/icons-material";
 
 interface Props {
@@ -10,19 +10,19 @@ interface Props {
 const ThemeToggleFloating: React.FC<Props> = ({ toggleColorMode, mode }) => {
   return (
     <Paper
-      elevation={6}
+      elevation={3}
       sx={{
         position: "fixed",
-        bottom: 20,
-        left: "50%",
-        transform: "translateX(-50%)",
-        borderRadius: 999,
-        px: 1,
-        py: 0.5,
+        bottom: 24,
+        right: 24,
+        borderRadius: "50%",
+        width: 48,
+        height: 48,
         display: "flex",
         alignItems: "center",
-        gap: 1,
-        zIndex: 1400,
+        justifyContent: "center",
+        zIndex: 1500,
+        bgcolor: "background.paper",
       }}
     >
       <Tooltip title={mode === "dark" ? "Modo claro" : "Modo escuro"}>
@@ -30,9 +30,6 @@ const ThemeToggleFloating: React.FC<Props> = ({ toggleColorMode, mode }) => {
           {mode === "dark" ? <Brightness7 fontSize="small" /> : <Brightness4 fontSize="small" />}
         </IconButton>
       </Tooltip>
-      <Typography variant="body2" sx={{ px: 0.5, userSelect: "none" }}>
-        {mode === "dark" ? "Claro" : "Escuro"}
-      </Typography>
     </Paper>
   );
 };
