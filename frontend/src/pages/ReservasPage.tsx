@@ -263,6 +263,17 @@ export const ReservasPage = () => {
           Gerenciar Reservas
         </Typography>
 
+        <Box mt={3} display="flex" justifyContent="flex-end" margin={2}>
+          <Button
+            variant="contained"
+            color="primary"
+            className="uppercase font-bold"
+            onClick={() => setModalCriarOpen(true)}
+          >
+            Cadastrar Nova Reserva
+          </Button>
+        </Box>
+
         <Box display="flex" gap={2} mb={3} flexDirection={{ xs: "column", md: "row" }}>
           <Box flex={1}>
             <TextField
@@ -327,17 +338,6 @@ export const ReservasPage = () => {
           onEdit={handleOpenEditModal}
           loading={loading}
         />
-
-        <Box mt={3} display="flex" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="primary"
-            className="uppercase font-bold"
-            onClick={() => setModalCriarOpen(true)}
-          >
-            Cadastrar Nova Reserva
-          </Button>
-        </Box>
 
         <Snackbar
           open={snackbar.open}

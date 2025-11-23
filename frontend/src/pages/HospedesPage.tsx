@@ -158,6 +158,19 @@ export const HospedesPage = () => {
           Lista de Hóspedes
         </Typography>
 
+        <Box mt={3} display="flex" justifyContent="flex-end" margin={3}>
+          <Button
+            variant="contained"
+            color="primary"
+            className="uppercase font-bold"
+            onClick={() => setAbrirModalCriar(true)}
+          
+          >
+            Novo Hóspede
+          </Button>
+        </Box>
+
+
         <Box mb={3}>
           <TextField
             fullWidth
@@ -201,17 +214,6 @@ export const HospedesPage = () => {
           onDelete={handleDelete}
           onEdit={handleOpenEditModal}
         />
-
-        <Box mt={3} display="flex" justifyContent="flex-end">
-          <Button
-            variant="contained"
-            color="primary"
-            className="uppercase font-bold"
-            onClick={() => setAbrirModalCriar(true)}
-          >
-            Novo Hóspede
-          </Button>
-        </Box>
 
         <Snackbar
           open={snackbar.open}

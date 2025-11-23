@@ -108,6 +108,13 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
     }
   };
 
+  const handleInputChange2 = (field: string, value: string) => {
+    setFormData((prev) => ({
+      ...prev,
+      [field]: field === "total" && value !== "" ? Number(value) : value,
+    }));
+  };
+
   const handleBlur = (field: string) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
     const value = formData[field as keyof typeof formData];
@@ -243,11 +250,14 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
             />
 
             {/* TOTAL */}
+
             <TextField
               label="Total (opcional)"
               type="number"
               value={formData.total}
-              onChange={(e) => handleInputChange("total", e.target.value)}
+              onChange={(e) =>
+                handleInputChange2("total", e.target.value)
+              }
               onBlur={() => handleBlur("total")}
               error={!!errors.total && touched.total}
               helperText={touched.total && errors.total}

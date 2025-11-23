@@ -7,7 +7,7 @@ export const getApiUrl = (): string => {
         return "";
     }
 
-    return "https://localhost:3000";
+    return "http://localhost:3333";
 };
 
 export const API_BASE_URL = getApiUrl();

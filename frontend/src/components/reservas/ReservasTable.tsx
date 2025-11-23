@@ -49,6 +49,7 @@ export const ReservasTable = ({
     "Quarto",
     "Status",
     "Total (R$)",
+    "Ações",
   ];
 
   if (loading) {

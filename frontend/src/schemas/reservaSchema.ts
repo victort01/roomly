@@ -34,7 +34,6 @@ export const createReservaSchema = z.object({
 
   total: z
     .number({ message: "Total deve ser numérico" })
-    .positive("O valor deve ser maior que zero")
     .optional(),
 
   status: z.enum(["PENDENTE", "CONFIRMADA", "CHECKED_IN", "CHECKED_OUT", "CANCELADA"]).optional(),

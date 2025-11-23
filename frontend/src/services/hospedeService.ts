@@ -25,7 +25,7 @@ export const deleteHospede = async (id: number): Promise<void> => {
 };
 
 export const updateHospede = async (id: number, dados: Partial<Hospede>): Promise<Hospede> => {
-  const response = await axios.put(`${API_ENDPOINTS.HOSPEDES}/${id}`, dados, {});
+  const response = await axios.put(`${API_ENDPOINTS.HOSPEDES}/${id}`, dados);
   return response.data;
 };
 
