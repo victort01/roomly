@@ -20,5 +20,3 @@ export const updateReserva = async (id: number, dados: Partial<Reserva>): Promis
 export const deleteReserva = async (id: number): Promise<void> => {
   await axios.delete(`${API_ENDPOINTS.RESERVAS}/${id}`);
 };
-
-

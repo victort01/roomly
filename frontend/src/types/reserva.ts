@@ -12,8 +12,7 @@ export interface Reserva {
     checkOut: string;
     total?: number | null;
     status: StatusReserva;
-    createddAt: string;
-    updatedAt: string;
+
 
     hospede?: Hospede;
     quarto?: Quarto;

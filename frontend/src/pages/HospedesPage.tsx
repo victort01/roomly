@@ -1,6 +1,6 @@
 import { useEffect, useState, useCallback, useMemo } from "react";
 import type { Hospede } from "../types/hospede";
-import { deleteHospede } from "../services/hospedeService";
+import { getAllHospedes, deleteHospede } from "../services/hospedeService";
 import {
   Box,
   Paper,
@@ -20,7 +20,6 @@ import HospedesTable from "../components/hospedes/HospedesTable";
 import { EditarHospedesModal } from "../components/hospedes/EditarHospedesModal";
 import { CriarHospedesModal } from "../components/hospedes/CriarHospedesModal";
 import { useDebounce } from "../hooks/useDebounce";
-import { getAllHospedes } from "../services/hospedeService";
 
 type SnackbarState = {
   open: boolean;
@@ -30,7 +29,7 @@ type SnackbarState = {
 
 export const HospedesPage = () => {
   const navigate = useNavigate();
-  const [hospedes, setPacientes] = useState<Hospede[]>([]);
+  const [hospedes, setHospedes] = useState<Hospede[]>([]);
   const [deletingId, setDeletingId] = useState<number | null>(null);
   const [searchTerm, setSearchTerm] = useState("");
   const [snackbar, setSnackbar] = useState<SnackbarState>({
@@ -45,7 +44,7 @@ export const HospedesPage = () => {
     const carregarHospedes = async () => {
       try {
         const data = await getAllHospedes();
-        setPacientes(data);
+        setHospedes(data);
       } catch (error) {
         console.error("Erro ao buscar hóspedes:", error);
         setSnackbar({
@@ -64,7 +63,7 @@ export const HospedesPage = () => {
 
     try {
       await deleteHospede(id);
-      setPacientes((prev) => prev.filter((p) => p.id !== id));
+      setHospedes((prev) => prev.filter((p) => p.id !== id));
       setSnackbar({
         open: true,
         message: "Hóspede removido com sucesso.",
@@ -91,18 +90,16 @@ export const HospedesPage = () => {
   }, []);
 
   const handleSaveHospede = useCallback((hospedeAtualizado: Hospede) => {
-    setPacientes((prev) =>
-      prev.map((p) => (p.id === hospedeAtualizado.id ? hospedeAtualizado : p))
-    );
+    setHospedes((prev) => prev.map((p) => (p.id === hospedeAtualizado.id ? hospedeAtualizado : p)));
     setSnackbar({
       open: true,
-      message: "Paciente atualizado com sucesso.",
+      message: "Hóspede atualizado com sucesso.",
       severity: "success",
     });
   }, []);
 
-  const handleSucessoCriarPaciente = useCallback((novoHospede: Hospede) => {
-    setPacientes((prev) => [...prev, novoHospede]);
+  const handleSucessoCriarHospede = useCallback((novoHospede: Hospede) => {
+    setHospedes((prev) => [...prev, novoHospede]);
     setSnackbar({
       open: true,
       message: "Hóspede cadastrado com sucesso.",
@@ -121,7 +118,8 @@ export const HospedesPage = () => {
       return (
         hospede.nome.toLowerCase().includes(termoBusca) ||
         hospede.documento.includes(termoBusca) ||
-        (hospede.telefone?.includes(termoBusca) ?? false)
+        (hospede.telefone?.includes(termoBusca) ?? false) ||
+        (hospede.email?.includes(termoBusca) ?? false)
       );
     });
   }, [hospedes, debouncedSearchTerm]);
@@ -163,7 +161,7 @@ export const HospedesPage = () => {
         <Box mb={3}>
           <TextField
             fullWidth
-            placeholder="Buscar por nome, email, CPF ou telefone..."
+            placeholder="Buscar por nome, email, documento ou telefone..."
             value={searchTerm}
             onChange={(e) => setSearchTerm(e.target.value)}
             slotProps={{
@@ -211,7 +209,7 @@ export const HospedesPage = () => {
             className="uppercase font-bold"
             onClick={() => setAbrirModalCriar(true)}
           >
-            Novo Paciente
+            Novo Hóspede
           </Button>
         </Box>
 
@@ -241,7 +239,7 @@ export const HospedesPage = () => {
       <CriarHospedesModal
         open={abrirModalCriar}
         onClose={() => setAbrirModalCriar(false)}
-        onSuccess={handleSucessoCriarPaciente}
+        onSuccess={handleSucessoCriarHospede}
       />
     </Box>
   );

@@ -1,6 +1,5 @@
 import axios from "axios";
-import type { Hospede} from "../types/hospede";
-import type { CreateHospedeData } from "../schemas/validation";
+import type { Hospede } from "../types/hospede";
 import { API_ENDPOINTS } from "../config/api";
 
 export const getAllHospedes = async (): Promise<Hospede[]> => {
@@ -16,7 +15,8 @@ export const getHospedeByDocumento = async (): Promise<Hospede> => {
 */
 export const getHospedeByDocumento = async (documento: string): Promise<Hospede> => {
   const response = await axios.post(`${API_ENDPOINTS.HOSPEDES}/buscar`, {
-    documento,});
+    documento,
+  });
   return response.data;
 };
 
@@ -29,7 +29,14 @@ export const updateHospede = async (id: number, dados: Partial<Hospede>): Promis
   return response.data;
 };
 
-export const createHospede = async (dados: CreateHospedeData): Promise<Hospede> => {
+export const createHospede = async (dados: Omit<Hospede, "id">): Promise<Hospede> => {
   const response = await axios.post(API_ENDPOINTS.HOSPEDES, dados);
   return response.data;
+};
+
+export default {
+  getAllHospedes,
+  getHospedeByDocumento,
+  updateHospede,
+  createHospede,
 };

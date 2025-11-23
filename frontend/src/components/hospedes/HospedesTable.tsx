@@ -6,9 +6,11 @@ import {
   TableCell,
   TableContainer,
   TableHead,
+  TableRow,
   IconButton,
   Tooltip,
-  TableRow,
+  Box,
+  CircularProgress,
 } from "@mui/material";
 import EditIcon from "@mui/icons-material/Edit";
 import DeleteIcon from "@mui/icons-material/Delete";
@@ -17,7 +19,8 @@ interface HospedeTableProps {
   hospedes: Hospede[];
   deletingId: number | null;
   onEdit: (hospede: Hospede) => void;
-  onDelete: (hospede: Hospede) => void;
+  onDelete: (id: number) => void;
+  loading?: boolean;
 }
 
 const HospedeTable: React.FC<HospedeTableProps> = ({
@@ -25,69 +28,83 @@ const HospedeTable: React.FC<HospedeTableProps> = ({
   deletingId,
   onDelete,
   onEdit,
+  loading = false,
 }) => {
+  const colunas: string[] = ["Nome", "Email", "Telefone", "Documento", "Ações"];
 
-  const colunas: string[] = [
-    "nome",
-    "email",
-    "telefone",
-    "documento",
-    "ações", 
-  ];
+  if (loading) {
+    return (
+      <Box
+        sx={{
+          display: "flex",
+          justifyContent: "center",
+          alignItems: "center",
+          py: 8,
+        }}
+      >
+        <CircularProgress />
+      </Box>
+    );
+  }
 
   return (
-    <TableContainer className="mb-4 rounded-lg shadow-md">
+    <TableContainer sx={{ mt: 4, borderRadius: 2 }}>
       <Table>
-        <TableHead className="bg-gray-200">
-          <TableRow>
+        <TableHead>
+          <TableRow
+            sx={{
+              bgcolor: "grey.900", // fundo escuro
+            }}
+          >
             {colunas.map((coluna) => (
               <TableCell
                 key={coluna}
-                className="font-bold"
                 align="center"
+                sx={{ fontWeight: "bold", color: "common.white" }}
               >
-                {coluna.charAt(0).toUpperCase() + coluna.slice(1)}
+                {coluna}
               </TableCell>
             ))}
           </TableRow>
         </TableHead>
+
         <TableBody>
           {hospedes.length === 0 ? (
             <TableRow>
-              <TableCell colSpan={colunas.length} align="center">
+              <TableCell
+                colSpan={colunas.length}
+                align="center"
+                sx={{ py: 6, color: "text.secondary" }}
+              >
                 Nenhum hóspede encontrado.
               </TableCell>
             </TableRow>
           ) : (
             hospedes.map((hospede) => (
-              <TableRow key={hospede.id} hover className="hover:bg-blue-50">
+              <TableRow key={hospede.id} hover sx={{ "&:hover": { bgcolor: "blue.50" } }}>
                 <TableCell align="center">{hospede.nome}</TableCell>
                 <TableCell align="center">{hospede.email}</TableCell>
                 <TableCell align="center">{hospede.telefone}</TableCell>
                 <TableCell align="center">{hospede.documento}</TableCell>
                 <TableCell align="center">
-                  <div className="flex justify-center gap-2">
+                  <Box sx={{ display: "flex", justifyContent: "center", gap: 1 }}>
                     <Tooltip title="Editar">
-                      <IconButton
-                        color="primary"
-                        size="small"
-                        onClick={() => onEdit(hospede)}
-                      >
+                      <IconButton color="primary" size="small" onClick={() => onEdit(hospede)}>
                         <EditIcon />
                       </IconButton>
                     </Tooltip>
-                    <Tooltip title="Excluir">
+                    <Tooltip title="Remover">
                       <IconButton
                         color="error"
                         size="small"
-                        onClick={() => onDelete(hospede)}
+                        onClick={() => onDelete(hospede.id)}
                         disabled={deletingId === hospede.id}
                         aria-label={`remover-${hospede.nome}`}
                       >
                         <DeleteIcon />
                       </IconButton>
                     </Tooltip>
-                  </div>
+                  </Box>
                 </TableCell>
               </TableRow>
             ))

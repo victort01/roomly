@@ -16,6 +16,9 @@ export const API_ENDPOINTS = {
     // auth
     LOGIN : `${API_BASE_URL}/login`,
 
+    //funcionarios
+    FUNCIONARIOS: `${API_BASE_URL}/funcionarios`, 
+
     //tipoquarto
     TIPOQUARTO: `${API_BASE_URL}/tipoquarto`,
 

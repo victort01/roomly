@@ -49,7 +49,6 @@ export const ReservasTable = ({
     "Quarto",
     "Status",
     "Total (R$)",
-    "Ações",
   ];
 
   if (loading) {
@@ -71,9 +70,9 @@ export const ReservasTable = ({
     <TableContainer className="mt-4 rounded-lg">
       <Table>
         <TableHead>
-          <TableRow className="bg-gray-800">
+          <TableRow sx={{ backgroundColor: "#1a1a1a" }}>
             {colunas.map((coluna) => (
-              <TableCell key={coluna} align="center" className="font-bold text-white">
+              <TableCell key={coluna} align="center" sx={{ fontWeight: "bold", color: "#fff" }}>
                 {coluna}
               </TableCell>
             ))}

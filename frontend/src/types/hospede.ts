@@ -6,8 +6,6 @@ export interface Hospede {
   email?: string | null;
   telefone?: string | null;
   documento: string;
-  createdAt: string;
-  updateAt: string;
 
   reservas?: Reserva[];
 }

@@ -11,34 +11,28 @@ import {
   Box,
 } from "@mui/material";
 
-import { createReservaSchema } from "../../schemas/reservaSchema";
+import { updateReservaSchema } from "../../schemas/reservaSchema";
 import { validateField } from "../../schemas/validation";
 
 import { getAllHospedes } from "../../services/hospedeService";
 import { getAllQuartos } from "../../services/quartoService";
 import { getAllFuncionarios } from "../../services/funcionarioService";
 
+import type { Reserva } from "../../types/reserva";
 import type { Hospede } from "../../types/hospede";
 import type { Quarto } from "../../types/quarto";
 import type { Funcionario } from "../../types/funcionario";
 
 import { StatusReserva } from "../../types/enums";
 
-interface CriarReservaModalProps {
+interface EditarReservaModalProps {
   open: boolean;
   onClose: () => void;
-  onSave: (dados: {
-    checkIn: Date;
-    checkOut: Date;
-    total?: number;
-    status: StatusReserva;
-    funcionarioId: number;
-    hospedeId: number;
-    quartoId: number;
-  }) => Promise<void>;
+  onSave: (id: number, dados: Partial<Reserva>) => Promise<void>;
+  reserva: Reserva | null;
 }
 
-export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalProps) => {
+export const EditarReservaModal = ({ open, onClose, onSave, reserva }: EditarReservaModalProps) => {
   const [formData, setFormData] = useState({
     checkIn: "",
     checkOut: "",
@@ -58,39 +52,36 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
   const [quartos, setQuartos] = useState<Quarto[]>([]);
   const [funcionarios, setFuncionarios] = useState<Funcionario[]>([]);
 
+  // PREENCHE DADOS DA RESERVA QUANDO O MODAL ABRE
   useEffect(() => {
-    if (open) {
-      resetForm();
+    if (open && reserva) {
+      setFormData({
+        checkIn: new Date(reserva.checkIn).toISOString().slice(0, 16),
+        checkOut: new Date(reserva.checkOut).toISOString().slice(0, 16),
+        total: reserva.total?.toString() ?? "",
+        status: reserva.status,
+        funcionarioId: reserva.funcionarioId,
+        hospedeId: reserva.hospedeId,
+        quartoId: reserva.quartoId,
+      });
+
+      setErrors({});
+      setTouched({});
       loadData();
     }
-  }, [open]);
+  }, [open, reserva]);
 
-  const resetForm = () => {
-    setFormData({
-      checkIn: "",
-      checkOut: "",
-      total: "",
-      status: StatusReserva.PENDENTE,
-      funcionarioId: 0,
-      hospedeId: 0,
-      quartoId: 0,
-    });
-
-    setErrors({});
-    setTouched({});
-  };
-
+  // CARREGA LISTA DE FUNC/HOS/QTO
   const loadData = async () => {
     setLoadingData(true);
     try {
-      const [funcs, hospes, quarts] = await Promise.all([
+      const [funcs, hosps, quarts] = await Promise.all([
         getAllFuncionarios(),
         getAllHospedes(),
         getAllQuartos(),
       ]);
-
       setFuncionarios(funcs);
-      setHospedes(hospes);
+      setHospedes(hosps);
       setQuartos(quarts);
     } catch (error) {
       console.error("Erro ao carregar dados:", error);
@@ -103,7 +94,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
     setFormData((prev) => ({ ...prev, [field]: value }));
 
     if (touched[field]) {
-      const error = validateField(createReservaSchema, field, value);
+      const error = validateField(updateReservaSchema, field, value);
       setErrors((prev) => ({ ...prev, [field]: error }));
     }
   };
@@ -111,17 +102,19 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
   const handleBlur = (field: string) => {
     setTouched((prev) => ({ ...prev, [field]: true }));
     const value = formData[field as keyof typeof formData];
-    const error = validateField(createReservaSchema, field, value);
+    const error = validateField(updateReservaSchema, field, value);
     setErrors((prev) => ({ ...prev, [field]: error }));
   };
 
   const handleSubmit = async () => {
+    if (!reserva) return;
+
     const newErrors: Record<string, string> = {};
     const newTouched: Record<string, boolean> = {};
 
     for (const key of Object.keys(formData)) {
       newTouched[key] = true;
-      const error = validateField(createReservaSchema, key, formData[key as keyof typeof formData]);
+      const error = validateField(updateReservaSchema, key, formData[key as keyof typeof formData]);
       if (error) newErrors[key] = error;
     }
 
@@ -133,9 +126,9 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
     setLoading(true);
 
     try {
-      await onSave({
-        checkIn: new Date(formData.checkIn),
-        checkOut: new Date(formData.checkOut),
+      await onSave(reserva.id, {
+        checkIn: new Date(formData.checkIn).toISOString(),
+        checkOut: new Date(formData.checkOut).toISOString(),
         total: formData.total ? Number(formData.total) : undefined,
         status: formData.status as StatusReserva,
         funcionarioId: formData.funcionarioId,
@@ -145,7 +138,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
 
       onClose();
     } catch (error) {
-      console.error("Erro ao criar reserva:", error);
+      console.error("Erro ao atualizar reserva:", error);
     } finally {
       setLoading(false);
     }
@@ -153,7 +146,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Nova Reserva</DialogTitle>
+      <DialogTitle>Editar Reserva</DialogTitle>
 
       <DialogContent>
         {loadingData ? (
@@ -162,7 +155,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
           </Box>
         ) : (
           <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            {/* HOSPEDE */}
+            {/* HÓSPEDE */}
             <TextField
               select
               label="Hóspede"
@@ -172,7 +165,6 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               error={!!errors.hospedeId && touched.hospedeId}
               helperText={touched.hospedeId && errors.hospedeId}
             >
-              <MenuItem value={0}>Selecione um hóspede</MenuItem>
               {hospedes.map((h) => (
                 <MenuItem key={h.id} value={h.id}>
                   {h.nome} - {h.documento}
@@ -190,7 +182,6 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               error={!!errors.quartoId && touched.quartoId}
               helperText={touched.quartoId && errors.quartoId}
             >
-              <MenuItem value={0}>Selecione um quarto</MenuItem>
               {quartos.map((q) => (
                 <MenuItem key={q.id} value={q.id}>
                   Quarto {q.numero}
@@ -198,7 +189,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               ))}
             </TextField>
 
-            {/* FUNCIONARIO */}
+            {/* FUNCIONÁRIO */}
             <TextField
               select
               label="Funcionário"
@@ -208,7 +199,6 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               error={!!errors.funcionarioId && touched.funcionarioId}
               helperText={touched.funcionarioId && errors.funcionarioId}
             >
-              <MenuItem value={0}>Selecione um funcionário</MenuItem>
               {funcionarios.map((f) => (
                 <MenuItem key={f.id} value={f.id}>
                   {f.nome}
@@ -225,7 +215,6 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               onBlur={() => handleBlur("checkIn")}
               error={!!errors.checkIn && touched.checkIn}
               helperText={touched.checkIn && errors.checkIn}
-              fullWidth
               slotProps={{ inputLabel: { shrink: true } }}
             />
 
@@ -238,7 +227,6 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               onBlur={() => handleBlur("checkOut")}
               error={!!errors.checkOut && touched.checkOut}
               helperText={touched.checkOut && errors.checkOut}
-              fullWidth
               slotProps={{ inputLabel: { shrink: true } }}
             />
 
@@ -251,13 +239,12 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               onBlur={() => handleBlur("total")}
               error={!!errors.total && touched.total}
               helperText={touched.total && errors.total}
-              fullWidth
             />
 
             {/* STATUS */}
             <TextField
               select
-              label="Status da Reserva"
+              label="Status"
               value={formData.status}
               onChange={(e) => handleInputChange("status", e.target.value)}
               onBlur={() => handleBlur("status")}
@@ -278,6 +265,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
         <Button onClick={onClose} disabled={loading}>
           Cancelar
         </Button>
+
         <Button onClick={handleSubmit} variant="contained" disabled={loading || loadingData}>
           {loading ? <CircularProgress size={22} /> : "Salvar"}
         </Button>

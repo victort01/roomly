@@ -17,7 +17,7 @@ interface EditarHospedesModalProps {
   open: boolean;
   hospede: Hospede | null;
   onClose: () => void;
-  onSave: (hospede: Hospede) => void;
+  onSave: (hospedeAtualizado: Hospede) => void;
 }
 
 export const EditarHospedesModal = ({
@@ -32,8 +32,6 @@ export const EditarHospedesModal = ({
     documento: "",
     telefone: "",
     email: "",
-    createdAt: "",
-    updateAt: "",
   };
   const [formData, setFormData] = useState<Hospede>(INITIAL_FORM_DATA);
   const [salvando, setSalvando] = useState(false);
@@ -61,6 +59,7 @@ export const EditarHospedesModal = ({
     setSalvando(true);
     try {
       await updateHospede(validation.data.id, validation.data);
+      onSave(validation.data);
       setErrors({});
       onClose();
     } catch (error) {
@@ -69,7 +68,7 @@ export const EditarHospedesModal = ({
     } finally {
       setSalvando(false);
     }
-  }, [formData, onClose]);
+  }, [formData, onSave, onClose]);
 
   return (
     <Dialog open={open} onClose={onClose} fullWidth maxWidth="sm">

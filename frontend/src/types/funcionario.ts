@@ -8,8 +8,7 @@ export interface Funcionario {
     senha: string;
     telefone?: string | null;
     role: Role;
-    createdAt: string;
-    updatedAt: string;
+
 
     reservas?: Reserva[];
 }

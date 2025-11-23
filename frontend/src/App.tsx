@@ -6,6 +6,7 @@ import { useMemo, useState } from "react";
 import LoginPage from "./pages/LoginPage";
 import HomePage from "./pages/HomePage";
 import HospedesPage from "./pages/HospedesPage";
+import { ReservasPage } from "./pages/ReservasPage";
 
 function App() {
   const [mode, setMode] = useState<"light" | "dark">("light");
@@ -43,6 +44,7 @@ function App() {
           <Route path="/" element={<LoginPage />} />
           <Route path="/home" element={<HomePage />} />
           <Route path="/hospedes" element={<HospedesPage />} />
+          <Route path="/reservas" element={<ReservasPage />} />
         </Routes>
       </Router>
     </ThemeProvider>
