@@ -7,7 +7,7 @@ import { setupSwagger } from "./swagger";
 const app = express();
 
 // Configuração CORS - permite requisições do frontend (suporta produção)
-const CORS_ORIGIN = process.env.CORS_ORIGIN || "http://localhost:5173";
+const CORS_ORIGIN = process.env.CORS_ORIGIN || "https://roomly-frontend.onrender.com";
 
 app.use(
   cors({
