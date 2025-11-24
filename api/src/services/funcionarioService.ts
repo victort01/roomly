@@ -86,20 +86,13 @@ export const remove = async (id: number): Promise<Funcionario> => {
 
 export const getByLogin = async (
   email: string,
-  senhaPlain: string
+  senha: string
 ): Promise<Funcionario | null> => {
-  const funcionario = await prisma.funcionario.findUnique({
-    where: { email },
+  return prisma.funcionario.findFirst({
+    where: {
+      email: email,
+      senha: senha,
+    },
   });
-  if (!funcionario) {
-    return null;
-  }
-
-  const senhaValida = await bcrypt.compare(senhaPlain, funcionario.senha);
-
-  if (!senhaValida) {
-    return null;
-  }
-
-  return funcionario;
 };
+
