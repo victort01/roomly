@@ -3,7 +3,6 @@
  * Suporta múltiplos ambientes (dev, produção, etc)
  */
 
-import { Dashboard } from "@mui/icons-material";
 
 export const getApiUrl = (): string => {
   // Se houver variável de ambiente, usar
