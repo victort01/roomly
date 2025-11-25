@@ -2,10 +2,7 @@ import { prisma } from "../database/prisma";
 import { Funcionario } from "../generated/prisma";
 import bcrypt from "bcryptjs";
 
-type FuncionarioCreateData = Omit<
-  Funcionario,
-  "id" | "createdAt" | "updatedAt"
->; //filtra os dados recebidos para nao alterar dados importantes
+type FuncionarioCreateData = Omit<Funcionario, "id" | "createdAt" | "updatedAt">; //filtra os dados recebidos para nao alterar dados importantes
 type FuncionarioUpdateData = Partial<FuncionarioCreateData>; // torna os dados opcionais para poder alterar qualquer, ainda filtrando (utilizando a funcao criada acima)
 
 const funcionarioSemSenhaSelect = {
@@ -18,9 +15,7 @@ const funcionarioSemSenhaSelect = {
   updatedAt: true,
 };
 
-export const create = async (
-  data: FuncionarioCreateData
-): Promise<Omit<Funcionario, "senha">> => {
+export const create = async (data: FuncionarioCreateData): Promise<Omit<Funcionario, "senha">> => {
   const hashSenha = await bcrypt.hash(data.senha, 10);
 
   const funcionario = await prisma.funcionario.create({
@@ -40,9 +35,7 @@ export const getAll = async (): Promise<Omit<Funcionario, "senha">[]> => {
   }) as any;
 };
 
-export const getById = async (
-  id: number
-): Promise<Omit<Funcionario, "senha"> | null> => {
+export const getById = async (id: number): Promise<Omit<Funcionario, "senha"> | null> => {
   return prisma.funcionario.findUnique({
     where: { id },
     select: {
@@ -84,22 +77,11 @@ export const remove = async (id: number): Promise<Funcionario> => {
   return prisma.funcionario.delete({ where: { id } });
 };
 
-export const getByLogin = async (
-  email: string,
-  senhaPlain: string
-): Promise<Funcionario | null> => {
-  const funcionario = await prisma.funcionario.findUnique({
-    where: { email },
+export const getByLogin = async (email: string, senha: string): Promise<Funcionario | null> => {
+  return prisma.funcionario.findFirst({
+    where: {
+      email: email,
+      senha: senha,
+    },
   });
-  if (!funcionario) {
-    return null;
-  }
-
-  const senhaValida = await bcrypt.compare(senhaPlain, funcionario.senha);
-
-  if (!senhaValida) {
-    return null;
-  }
-
-  return funcionario;
 };

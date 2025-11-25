@@ -1,10 +1,6 @@
 import { prisma } from "../database/prisma";
 
-import { 
-  Role, 
-  StatusQuarto, 
-  StatusReserva
-} from "../generated/prisma";
+import { Role, StatusQuarto, StatusReserva } from "../generated/prisma";
 
 async function seed() {
   console.log("🌱 Iniciando seed do banco...\n");
@@ -17,10 +13,30 @@ async function seed() {
 
     const funcionariosData = [
       { nome: "Mariana Alves", email: "mariana@hotel.com", senha: "senha123", role: Role.ADMIN },
-      { nome: "Fernando Gomes", email: "fernando@hotel.com", senha: "senha123", role: Role.GERENTE },
-      { nome: "Ricardo Mendes", email: "ricardo@hotel.com", senha: "senha123", role: Role.RECEPCIONISTA },
-      { nome: "Priscila Tavares", email: "priscila@hotel.com", senha: "senha123", role: Role.RECEPCIONISTA },
-      { nome: "João Victor", email: "joaov@hotel.com", senha: "senha123", role: Role.RECEPCIONISTA },
+      {
+        nome: "Fernando Gomes",
+        email: "fernando@hotel.com",
+        senha: "senha123",
+        role: Role.GERENTE,
+      },
+      {
+        nome: "Ricardo Mendes",
+        email: "ricardo@hotel.com",
+        senha: "senha123",
+        role: Role.RECEPCIONISTA,
+      },
+      {
+        nome: "Priscila Tavares",
+        email: "priscila@hotel.com",
+        senha: "senha123",
+        role: Role.RECEPCIONISTA,
+      },
+      {
+        nome: "João Victor",
+        email: "joaov@hotel.com",
+        senha: "senha123",
+        role: Role.RECEPCIONISTA,
+      },
     ];
 
     let funcionariosCount = 0;
@@ -37,19 +53,48 @@ async function seed() {
 
     console.log(`📊 Total de funcionários criados: ${funcionariosCount}\n`);
 
-
     // ======================================================
     // HÓSPEDES
     // ======================================================
     console.log("👥 Criando hóspedes...");
 
     const hospedesData = [
-      { nome: "Lucas Ferreira", email: "lucasf@gmail.com", telefone: "11984563210", documento: "345.123.678-90" },
-      { nome: "Ana Júlia Martins", email: "anajmartins@gmail.com", telefone: "11988776655", documento: "123.456.789-00" },
-      { nome: "Bruno Andrade", email: "bruno.andrade@hotmail.com", telefone: "11977889944", documento: "987.654.321-11" },
-      { nome: "Beatriz Gomes", email: "bia.gomes22@gmail.com", telefone: "11999887766", documento: "456.789.123-55" },
-      { nome: "Eduardo Silva", email: "edu_silva@gmail.com", telefone: "11993124567", documento: "321.654.987-77" },
-      { nome: "Camila Oliveira", email: "camila.oli@gmail.com", telefone: "11976543210", documento: "741.852.963-00" },
+      {
+        nome: "Lucas Ferreira",
+        email: "lucasf@gmail.com",
+        telefone: "11984563210",
+        documento: "345.123.678-90",
+      },
+      {
+        nome: "Ana Júlia Martins",
+        email: "anajmartins@gmail.com",
+        telefone: "11988776655",
+        documento: "123.456.789-00",
+      },
+      {
+        nome: "Bruno Andrade",
+        email: "bruno.andrade@hotmail.com",
+        telefone: "11977889944",
+        documento: "987.654.321-11",
+      },
+      {
+        nome: "Beatriz Gomes",
+        email: "bia.gomes22@gmail.com",
+        telefone: "11999887766",
+        documento: "456.789.123-55",
+      },
+      {
+        nome: "Eduardo Silva",
+        email: "edu_silva@gmail.com",
+        telefone: "11993124567",
+        documento: "321.654.987-77",
+      },
+      {
+        nome: "Camila Oliveira",
+        email: "camila.oli@gmail.com",
+        telefone: "11976543210",
+        documento: "741.852.963-00",
+      },
     ];
 
     let hospedesCount = 0;
@@ -66,19 +111,43 @@ async function seed() {
 
     console.log(`📊 Total de hóspedes criados: ${hospedesCount}\n`);
 
-
     // ======================================================
     // TIPOS DE QUARTO
     // ======================================================
     console.log("🏨 Criando tipos de quarto...");
 
     const tiposData = [
-      { nome: "Econômico", descricao: "Quarto compacto e funcional", capacidade: 1, precoBase: 120 },
-      { nome: "Luxo", descricao: "Quarto espaçoso com varanda e vista lateral", capacidade: 3, precoBase: 350 },
-      { nome: "Premium", descricao: "Andar alto, cama king e varanda", capacidade: 3, precoBase: 480 },
+      {
+        nome: "Econômico",
+        descricao: "Quarto compacto e funcional",
+        capacidade: 1,
+        precoBase: 120,
+      },
+      {
+        nome: "Luxo",
+        descricao: "Quarto espaçoso com varanda e vista lateral",
+        capacidade: 3,
+        precoBase: 350,
+      },
+      {
+        nome: "Premium",
+        descricao: "Andar alto, cama king e varanda",
+        capacidade: 3,
+        precoBase: 480,
+      },
       { nome: "Família", descricao: "Ideal para grupos e famílias", capacidade: 5, precoBase: 600 },
-      { nome: "Suíte Executiva", descricao: "Quarto para negócios com mesa de trabalho e conforto extra", capacidade: 2, precoBase: 700 },
-      { nome: "Suíte Presidencial", descricao: "Suíte completa com sala, jacuzzi e vista panorâmica", capacidade: 4, precoBase: 1200 },
+      {
+        nome: "Suíte Executiva",
+        descricao: "Quarto para negócios com mesa de trabalho e conforto extra",
+        capacidade: 2,
+        precoBase: 700,
+      },
+      {
+        nome: "Suíte Presidencial",
+        descricao: "Suíte completa com sala, jacuzzi e vista panorâmica",
+        capacidade: 4,
+        precoBase: 1200,
+      },
     ];
 
     let tiposCount = 0;
@@ -97,7 +166,6 @@ async function seed() {
 
     const tiposCriados = await prisma.tipoQuarto.findMany();
 
-
     // ======================================================
     // QUARTOS
     // ======================================================
@@ -111,7 +179,7 @@ async function seed() {
         quartosData.push({
           numero: `${roomNumber}`,
           tipoId: tipo.id,
-          status: StatusQuarto.DISPONIVEL
+          status: StatusQuarto.DISPONIVEL,
         });
         roomNumber++;
       }
@@ -129,7 +197,6 @@ async function seed() {
     }
 
     console.log(`📊 Total de quartos criados: ${quartosCount}\n`);
-
 
     // ======================================================
     // RESERVAS (sem pagamento)
@@ -154,7 +221,7 @@ async function seed() {
         checkIn: new Date(2025, 0, 5 + i),
         checkOut: new Date(2025, 0, 6 + i),
         total: quarto.tipo.precoBase,
-        status: StatusReserva.CONFIRMADA
+        status: StatusReserva.CONFIRMADA,
       });
     }
 
@@ -170,7 +237,6 @@ async function seed() {
     }
 
     console.log(`📊 Total de reservas criadas: ${reservasCount}\n`);
-
 
     // ======================================================
     // RESUMO FINAL

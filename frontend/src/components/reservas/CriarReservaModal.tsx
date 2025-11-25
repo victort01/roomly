@@ -255,9 +255,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               label="Total (opcional)"
               type="number"
               value={formData.total}
-              onChange={(e) =>
-                handleInputChange2("total", e.target.value)
-              }
+              onChange={(e) => handleInputChange2("total", e.target.value)}
               onBlur={() => handleBlur("total")}
               error={!!errors.total && touched.total}
               helperText={touched.total && errors.total}

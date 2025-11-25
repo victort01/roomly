@@ -7,12 +7,7 @@ export const getAllHospedes = async (): Promise<Hospede[]> => {
   return response.data;
 };
 
-/*mudar esta porra
-export const getHospedeByDocumento = async (): Promise<Hospede> => {
-    const response = await axios.get(API_ENDPOINTS.HOSPEDES);
-    return response.data;
-}
-*/
+
 export const getHospedeByDocumento = async (documento: string): Promise<Hospede> => {
   const response = await axios.post(`${API_ENDPOINTS.HOSPEDES}/buscar`, {
     documento,
@@ -25,7 +20,7 @@ export const deleteHospede = async (id: number): Promise<void> => {
 };
 
 export const updateHospede = async (id: number, dados: Partial<Hospede>): Promise<Hospede> => {
-  const response = await axios.put(`${API_ENDPOINTS.HOSPEDES}/${id}`, dados);
+  const response = await axios.put(`${API_ENDPOINTS.HOSPEDES}/${id}`, dados, {});
   return response.data;
 };
 

@@ -3,8 +3,11 @@
  * Suporta múltiplos ambientes (dev, produção, etc)
  */
 
+import { Dashboard } from "@mui/icons-material";
+
 export const getApiUrl = (): string => {
   // Se houver variável de ambiente, usar
+  
   if (import.meta.env.VITE_API_URL) {
     return import.meta.env.VITE_API_URL;
   }
@@ -26,6 +29,9 @@ export const API_ENDPOINTS = {
 
   //funcionarios
   FUNCIONARIOS: `${API_BASE_URL}/funcionarios`,
+
+  //dashboard
+  DASHBOARD: `${API_BASE_URL}/dashboard`,
 
   //tipoquarto
   TIPOQUARTO: `${API_BASE_URL}/tipoquarto`,

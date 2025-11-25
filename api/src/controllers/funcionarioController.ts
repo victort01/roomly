@@ -76,6 +76,6 @@ export const getByLogin = async (req: Request, res: Response) => {
       return res.json(safeData);
 
   } catch (error: any) {
-    return res.status(500).json({ message: error.mensage });
+    return res.status(500).json({ message: error.message });
   }
 };
