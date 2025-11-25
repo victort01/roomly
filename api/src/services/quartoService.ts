@@ -9,7 +9,11 @@ export const create = async ( data: QuartoCreateData): Promise<Quarto> => {
 };
 
 export const getAll = async (): Promise<Quarto[]> => {
-    return prisma.quarto.findMany();
+    return prisma.quarto.findMany({
+        include: {
+            tipo: true
+        }
+    });
 };
 
 export const getById = async (id: number): Promise<Quarto | null> => {

@@ -3,8 +3,9 @@ import { StatusQuarto, StatusReserva } from "./enums";
 export interface DashboardStats {
   totalHospedesToday: number;
   totalQuartosOcupados: number;
+  totalQuartosLivres: number;
+  totalQuartos: number;
   totalReservasPendentes: number;
-  receitaEstimada: number;
 }
 
 export interface RoomOccupation {

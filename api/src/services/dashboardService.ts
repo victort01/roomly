@@ -3,8 +3,9 @@ import { StatusQuarto, StatusReserva } from "../generated/prisma";
 interface DashboardStats {
   totalHospedesToday: number;
   totalQuartosOcupados: number;
+  totalQuartosLivres: number;
+  totalQuartos: number;
   totalReservasPendentes: number;
-  receitaEstimada: number;
 }
 
 interface RoomOccupation {
@@ -42,12 +43,58 @@ export const getDashboardStats = async (
     },
   });
 
-  // Total de quartos ocupados
-  const totalQuartosOcupados = await prisma.quarto.count({
+  // Total de quartos
+  const totalQuartos = await prisma.quarto.count();
+
+  // Total de quartos ocupados no período
+  const quartosComReservaAtiva = await prisma.reserva.findMany({
     where: {
-      status: StatusQuarto.OCUPADO,
+      OR: [
+        {
+          // Reservas que começam no período
+          checkIn: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        {
+          // Reservas que terminam no período
+          checkOut: {
+            gte: startDate,
+            lte: endDate,
+          },
+        },
+        {
+          // Reservas que iniciam antes e terminam depois do período
+          AND: [
+            {
+              checkIn: {
+                lte: startDate,
+              },
+            },
+            {
+              checkOut: {
+                gte: endDate,
+              },
+            },
+          ],
+        },
+      ],
+      status: {
+        in: [StatusReserva.CONFIRMADA, StatusReserva.CHECKED_IN],
+      },
+    },
+    select: {
+      quartoId: true,
     },
   });
+
+  // Contar quartos únicos ocupados
+  const quartosOcupadosIds = new Set(quartosComReservaAtiva.map((r) => r.quartoId));
+  const totalQuartosOcupados = quartosOcupadosIds.size;
+
+  // Total de quartos livres
+  const totalQuartosLivres = totalQuartos - totalQuartosOcupados;
 
   // Total de reservas pendentes
   const totalReservasPendentes = await prisma.reserva.count({
@@ -56,49 +103,58 @@ export const getDashboardStats = async (
     },
   });
 
-  // Receita estimada (soma do total das reservas confirmadas ou checked-in no período)
-  const reservasComReceita = await prisma.reserva.aggregate({
-    where: {
-      checkIn: {
-        gte: startDate,
-        lte: endDate,
-      },
-      status: {
-        in: [StatusReserva.CONFIRMADA, StatusReserva.CHECKED_IN, StatusReserva.CHECKED_OUT],
-      },
-      total: {
-        not: null,
-      },
-    },
-    _sum: {
-      total: true,
-    },
-  });
-
-  const receitaEstimada = reservasComReceita._sum.total || 0;
-
   return {
     totalHospedesToday,
     totalQuartosOcupados,
+    totalQuartosLivres,
+    totalQuartos,
     totalReservasPendentes,
-    receitaEstimada,
   };
 };
 
-export const getRoomOccupation = async (): Promise<RoomOccupation[]> => {
-  const now = new Date();
+export const getRoomOccupation = async (
+  dataInicio?: string,
+  dataFim?: string
+): Promise<RoomOccupation[]> => {
+  const startDate = dataInicio ? new Date(dataInicio) : new Date();
+  const endDate = dataFim ? new Date(dataFim) : new Date();
+  
+  startDate.setHours(0, 0, 0, 0);
+  endDate.setHours(23, 59, 59, 999);
 
   const quartos = await prisma.quarto.findMany({
     include: {
       tipo: true,
       reservas: {
         where: {
-          checkIn: {
-            lte: now,
-          },
-          checkOut: {
-            gte: now,
-          },
+          OR: [
+            {
+              checkIn: {
+                gte: startDate,
+                lte: endDate,
+              },
+            },
+            {
+              checkOut: {
+                gte: startDate,
+                lte: endDate,
+              },
+            },
+            {
+              AND: [
+                {
+                  checkIn: {
+                    lte: startDate,
+                  },
+                },
+                {
+                  checkOut: {
+                    gte: endDate,
+                  },
+                },
+              ],
+            },
+          ],
           status: {
             in: [StatusReserva.CONFIRMADA, StatusReserva.CHECKED_IN],
           },

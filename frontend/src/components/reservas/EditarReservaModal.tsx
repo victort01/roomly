@@ -216,7 +216,7 @@ export const EditarReservaModal = ({ open, onClose, onSave, reserva }: EditarRes
             >
               {quartos.map((q) => (
                 <MenuItem key={q.id} value={q.id}>
-                  Quarto {q.numero}
+                  Quarto {q.numero} — {q.tipo?.nome || "Tipo não definido"}
                 </MenuItem>
               ))}
             </TextField>

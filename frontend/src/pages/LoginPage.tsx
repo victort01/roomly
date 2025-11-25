@@ -1,7 +1,7 @@
 import { useState, useCallback } from "react";
 import { useNavigate } from "react-router-dom";
-import { TextField, Button, Box, Typography, Paper, Alert, CircularProgress } from "@mui/material";
-import { Login as LoginIcon } from "@mui/icons-material";
+import { TextField, Button, Box, Typography, Paper, Alert, CircularProgress, IconButton, InputAdornment } from "@mui/material";
+import { Login as LoginIcon, Visibility, VisibilityOff } from "@mui/icons-material";
 import type { Funcionario } from "../types/funcionario";
 import { validateLogin } from "../schemas/validation";
 import { login } from "../services/loginService";
@@ -20,6 +20,7 @@ const LoginPage: React.FC = () => {
   const [msgSucesso, setMsgSucesso] = useState("");
   const [msgErro, setMsgErro] = useState("");
   const [isLoading, setIsLoading] = useState(false);
+  const [showPassword, setShowPassword] = useState(false);
 
   const handleInputChange = useCallback((e: React.ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
@@ -103,7 +104,7 @@ const LoginPage: React.FC = () => {
           <TextField
             label="Senha"
             name="senha"
-            type="password"
+            type={showPassword ? "text" : "password"}
             fullWidth
             margin="normal"
             value={formData.senha}
@@ -111,6 +112,21 @@ const LoginPage: React.FC = () => {
             error={!!errors.senha}
             helperText={errors.senha}
             disabled={isLoading}
+            slotProps={{
+              input: {
+                endAdornment: (
+                  <InputAdornment position="end">
+                    <IconButton
+                      onClick={() => setShowPassword(!showPassword)}
+                      edge="end"
+                      disabled={isLoading}
+                    >
+                      {showPassword ? <VisibilityOff /> : <Visibility />}
+                    </IconButton>
+                  </InputAdornment>
+                ),
+              },
+            }}
           />
 
           <Button type="submit" variant="contained" fullWidth sx={{ mt: 3 }} disabled={isLoading}>

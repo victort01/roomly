@@ -14,7 +14,6 @@ import PeopleAltOutlinedIcon from "@mui/icons-material/PeopleAltOutlined";
 import CalendarMonthOutlinedIcon from "@mui/icons-material/CalendarMonthOutlined";
 import LogoutOutlinedIcon from "@mui/icons-material/LogoutOutlined";
 import HotelOutlinedIcon from "@mui/icons-material/HotelOutlined";
-import AttachMoneyOutlinedIcon from "@mui/icons-material/AttachMoneyOutlined";
 import PendingActionsOutlinedIcon from "@mui/icons-material/PendingActionsOutlined";
 import MeetingRoomOutlinedIcon from "@mui/icons-material/MeetingRoomOutlined";
 import CheckCircleOutlineIcon from "@mui/icons-material/CheckCircleOutline";
@@ -44,7 +43,7 @@ const Home: React.FC = () => {
       setLoading(true);
       const [statsData, roomsData] = await Promise.all([
         getDashboardStats(dateFilter.dataInicio, dateFilter.dataFim),
-        getRoomOccupation(),
+        getRoomOccupation(dateFilter.dataInicio, dateFilter.dataFim),
       ]);
       setStats(statsData);
       setRooms(roomsData);
@@ -270,7 +269,7 @@ const Home: React.FC = () => {
             </Paper>
 
             {/* Cards de Estatísticas */}
-            <Box display="grid" gridTemplateColumns="repeat(4, 1fr)" gap={4} mb={4}>
+            <Box display="grid" gridTemplateColumns="repeat(3, 1fr)" gap={4} mb={4}>
               {/* Card 1 */}
               <Paper
                 sx={{
@@ -302,14 +301,25 @@ const Home: React.FC = () => {
                   color: "white",
                 }}
               >
-                <Box display="flex" alignItems="center" gap={2} mb={1}>
+                <Box display="flex" alignItems="flex-start" gap={2}>
                   <MeetingRoomOutlinedIcon sx={{ fontSize: 40 }} />
-                  <Box>
+                  <Box flex={1}>
                     <Typography variant="h4" fontWeight={700}>
-                      {stats?.totalQuartosOcupados || 0}
+                      {stats?.totalQuartosOcupados || 0} / {stats?.totalQuartos || 0}
                     </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Quartos Ocupados
+                    <Typography variant="body2" sx={{ opacity: 0.9, mb: 0.5 }}>
+                      Ocupados (
+                      {stats?.totalQuartos
+                        ? ((stats.totalQuartosOcupados / stats.totalQuartos) * 100).toFixed(0)
+                        : 0}
+                      %)
+                    </Typography>
+                    <Typography variant="body2" sx={{ opacity: 0.8 }}>
+                      {stats?.totalQuartosLivres || 0} livres (
+                      {stats?.totalQuartos
+                        ? ((stats.totalQuartosLivres / stats.totalQuartos) * 100).toFixed(0)
+                        : 0}
+                      %)
                     </Typography>
                   </Box>
                 </Box>
@@ -332,28 +342,6 @@ const Home: React.FC = () => {
                     </Typography>
                     <Typography variant="body2" sx={{ opacity: 0.9 }}>
                       Reservas Pendentes
-                    </Typography>
-                  </Box>
-                </Box>
-              </Paper>
-
-              {/* Card 4 */}
-              <Paper
-                sx={{
-                  p: 3,
-                  borderRadius: 2,
-                  background: `linear-gradient(135deg, #4caf50 0%, #388e3c 100%)`,
-                  color: "white",
-                }}
-              >
-                <Box display="flex" alignItems="center" gap={2} mb={1}>
-                  <AttachMoneyOutlinedIcon sx={{ fontSize: 40 }} />
-                  <Box>
-                    <Typography variant="h4" fontWeight={700}>
-                      R$ {stats?.receitaEstimada.toFixed(2) || "0.00"}
-                    </Typography>
-                    <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Receita Estimada
                     </Typography>
                   </Box>
                 </Box>

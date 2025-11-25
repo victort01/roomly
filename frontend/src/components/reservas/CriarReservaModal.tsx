@@ -222,7 +222,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               <MenuItem value={0}>Selecione um quarto</MenuItem>
               {quartos.map((q) => (
                 <MenuItem key={q.id} value={q.id}>
-                  Quarto {q.numero}
+                  Quarto {q.numero} — {q.tipo?.nome || "Tipo não definido"}
                 </MenuItem>
               ))}
             </TextField>

@@ -19,7 +19,11 @@ export const getStats = async (req: Request, res: Response) => {
 
 export const getRoomOccupation = async (req: Request, res: Response) => {
   try {
-    const rooms = await dashboardService.getRoomOccupation();
+    const { dataInicio, dataFim } = req.query;
+    const rooms = await dashboardService.getRoomOccupation(
+      dataInicio as string | undefined,
+      dataFim as string | undefined
+    );
     return res.status(200).json(rooms);
   } catch (error) {
     console.error("Error fetching room occupation:", error);
