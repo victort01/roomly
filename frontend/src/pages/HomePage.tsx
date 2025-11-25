@@ -57,7 +57,7 @@ const Home: React.FC = () => {
 
   useEffect(() => {
     fetchDashboardData();
-  }, [dateFilter]);
+  }, []);
 
   const getStatusColor = (status: StatusQuarto) => {
     switch (status) {
@@ -160,6 +160,59 @@ const Home: React.FC = () => {
         </Button>
       </Box>
 
+      {/* Acesso Rápido */}
+      <Typography variant="h4" fontWeight={700} mb={3} mt={5} margin={5}>
+        Acesso Rápido
+      </Typography>
+
+      <Box
+        display="grid"
+        gridTemplateColumns="repeat(auto-fit, minmax(280px, 1fr))"
+        gap={6}
+        px={4}
+        mb={5}
+      >
+        <Paper sx={{ p: 3, borderRadius: 2 }}>
+          <Typography display="flex" alignItems="center" gap={1} fontSize={20} fontWeight={600}>
+            <PeopleAltOutlinedIcon />
+            Gerenciar Hóspedes
+          </Typography>
+
+          <Typography color="text.secondary" mt={1}>
+            Cadastre e consulte hóspedes do hotel
+          </Typography>
+
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={() => navigate("/hospedes")}
+          >
+            Acessar
+          </Button>
+        </Paper>
+
+        <Paper sx={{ p: 3, borderRadius: 2 }}>
+          <Typography display="flex" alignItems="center" gap={1} fontSize={20} fontWeight={600}>
+            <CalendarMonthOutlinedIcon />
+            Gerenciar Reservas
+          </Typography>
+
+          <Typography color="text.secondary" mt={1}>
+            Cadastre e consulte reservas do hotel
+          </Typography>
+
+          <Button
+            variant="contained"
+            fullWidth
+            sx={{ mt: 2 }}
+            onClick={() => navigate("/reservas")}
+          >
+            Acessar
+          </Button>
+        </Paper>
+      </Box>
+
       <Box px={4} py={4}>
         <Typography variant="h4" fontWeight={700} mb={1}>
           Dashboard
@@ -208,16 +261,16 @@ const Home: React.FC = () => {
                     fontSize: "14px",
                   }}
                 />
+
+                {/* Botão aplicar filtro */}
+                <Button variant="contained" onClick={fetchDashboardData}>
+                  Aplicar filtro
+                </Button>
               </Box>
             </Paper>
 
             {/* Cards de Estatísticas */}
-            <Box
-              display="grid"
-              gap={20}
-              mb={4}
-              gridTemplateColumns="repeat(auto-fit, minmax(250px, 1fr))"
-            >
+            <Box display="grid" gridTemplateColumns="repeat(4, 1fr)" gap={4} mb={4}>
               {/* Card 1 */}
               <Paper
                 sx={{
@@ -234,7 +287,7 @@ const Home: React.FC = () => {
                       {stats?.totalHospedesToday || 0}
                     </Typography>
                     <Typography variant="body2" sx={{ opacity: 0.9 }}>
-                      Hóspedes Hoje
+                      Hóspedes
                     </Typography>
                   </Box>
                 </Box>
@@ -306,7 +359,6 @@ const Home: React.FC = () => {
                 </Box>
               </Paper>
             </Box>
-
             {/* Ocupação dos Quartos */}
             <Paper sx={{ p: 3, borderRadius: 2, mb: 4 }}>
               <Typography variant="h5" fontWeight={700} mb={3}>
@@ -316,7 +368,7 @@ const Home: React.FC = () => {
               <Box
                 display="grid"
                 gridTemplateColumns="repeat(auto-fit, minmax(260px, 1fr))"
-                gap={20}
+                gap={10}
               >
                 {rooms.map((room) => (
                   <Card
@@ -385,65 +437,6 @@ const Home: React.FC = () => {
                 ))}
               </Box>
             </Paper>
-
-            {/* Acesso Rápido */}
-            <Typography variant="h5" fontWeight={700} mb={3}>
-              Acesso Rápido
-            </Typography>
-
-            <Box display="grid" gap={20} gridTemplateColumns="repeat(auto-fit, minmax(300px, 1fr))">
-              <Paper sx={{ p: 3, borderRadius: 2 }}>
-                <Typography
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  fontSize={20}
-                  fontWeight={600}
-                >
-                  <PeopleAltOutlinedIcon />
-                  Gerenciar Hóspedes
-                </Typography>
-
-                <Typography color="text.secondary" mt={1}>
-                  Cadastre e consulte hóspedes do hotel
-                </Typography>
-
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  onClick={() => navigate("/hospedes")}
-                >
-                  Acessar
-                </Button>
-              </Paper>
-
-              <Paper sx={{ p: 3, borderRadius: 2 }}>
-                <Typography
-                  display="flex"
-                  alignItems="center"
-                  gap={1}
-                  fontSize={20}
-                  fontWeight={600}
-                >
-                  <CalendarMonthOutlinedIcon />
-                  Gerenciar Reservas
-                </Typography>
-
-                <Typography color="text.secondary" mt={1}>
-                  Cadastre e consulte reservas do hotel
-                </Typography>
-
-                <Button
-                  variant="contained"
-                  fullWidth
-                  sx={{ mt: 2 }}
-                  onClick={() => navigate("/reservas")}
-                >
-                  Acessar
-                </Button>
-              </Paper>
-            </Box>
           </>
         )}
       </Box>

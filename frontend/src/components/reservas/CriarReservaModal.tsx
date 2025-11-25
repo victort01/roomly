@@ -7,6 +7,7 @@ import {
   Button,
   TextField,
   MenuItem,
+  Autocomplete,
   CircularProgress,
   Box,
 } from "@mui/material";
@@ -160,33 +161,53 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
 
   return (
     <Dialog open={open} onClose={onClose} maxWidth="sm" fullWidth>
-      <DialogTitle>Nova Reserva</DialogTitle>
+      <DialogTitle sx={{ fontWeight: 700, pb: 1 }}>Nova Reserva</DialogTitle>
 
-      <DialogContent>
+      <DialogContent sx={{ pt: 1 }}>
         {loadingData ? (
           <Box sx={{ display: "flex", justifyContent: "center", py: 4 }}>
             <CircularProgress />
           </Box>
         ) : (
-          <Box sx={{ display: "flex", flexDirection: "column", gap: 2, mt: 2 }}>
-            {/* HOSPEDE */}
-            <TextField
-              select
-              label="Hóspede"
-              value={formData.hospedeId}
-              onChange={(e) => handleInputChange("hospedeId", Number(e.target.value))}
-              onBlur={() => handleBlur("hospedeId")}
-              error={!!errors.hospedeId && touched.hospedeId}
-              helperText={touched.hospedeId && errors.hospedeId}
-            >
-              <MenuItem value={0}>Selecione um hóspede</MenuItem>
-              {hospedes.map((h) => (
-                <MenuItem key={h.id} value={h.id}>
-                  {h.nome} - {h.documento}
-                </MenuItem>
-              ))}
-            </TextField>
+          <Box sx={{ display: "flex", flexDirection: "column", gap: 3, mt: 2 }}>
+            {/* HÓSPEDE + FUNCIONÁRIO lado a lado */}
+            <Box sx={{ display: "flex", gap: 2 }}>
+              {/* HÓSPEDE AUTOCOMPLETE */}
+              <Autocomplete
+                options={hospedes}
+                getOptionLabel={(h) => `${h.nome} — ${h.documento}`}
+                value={hospedes.find((h) => h.id === formData.hospedeId) || null}
+                onChange={(_, value) => handleInputChange("hospedeId", value ? value.id : 0)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Hóspede"
+                    error={!!errors.hospedeId && touched.hospedeId}
+                    helperText={touched.hospedeId && errors.hospedeId}
+                    fullWidth
+                  />
+                )}
+                fullWidth
+              />
 
+              {/* FUNCIONÁRIO AUTOCOMPLETE */}
+              <Autocomplete
+                options={funcionarios}
+                getOptionLabel={(f) => f.nome}
+                value={funcionarios.find((f) => f.id === formData.funcionarioId) || null}
+                onChange={(_, value) => handleInputChange("funcionarioId", value ? value.id : 0)}
+                renderInput={(params) => (
+                  <TextField
+                    {...params}
+                    label="Funcionário"
+                    error={!!errors.funcionarioId && touched.funcionarioId}
+                    helperText={touched.funcionarioId && errors.funcionarioId}
+                    fullWidth
+                  />
+                )}
+                fullWidth
+              />
+            </Box>
             {/* QUARTO */}
             <TextField
               select
@@ -196,6 +217,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               onBlur={() => handleBlur("quartoId")}
               error={!!errors.quartoId && touched.quartoId}
               helperText={touched.quartoId && errors.quartoId}
+              fullWidth
             >
               <MenuItem value={0}>Selecione um quarto</MenuItem>
               {quartos.map((q) => (
@@ -205,52 +227,34 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               ))}
             </TextField>
 
-            {/* FUNCIONARIO */}
-            <TextField
-              select
-              label="Funcionário"
-              value={formData.funcionarioId}
-              onChange={(e) => handleInputChange("funcionarioId", Number(e.target.value))}
-              onBlur={() => handleBlur("funcionarioId")}
-              error={!!errors.funcionarioId && touched.funcionarioId}
-              helperText={touched.funcionarioId && errors.funcionarioId}
-            >
-              <MenuItem value={0}>Selecione um funcionário</MenuItem>
-              {funcionarios.map((f) => (
-                <MenuItem key={f.id} value={f.id}>
-                  {f.nome}
-                </MenuItem>
-              ))}
-            </TextField>
+            {/* CHECK-IN e CHECK-OUT lado a lado */}
+            <Box sx={{ display: "flex", gap: 2 }}>
+              <TextField
+                type="datetime-local"
+                label="Check-in"
+                value={formData.checkIn}
+                onChange={(e) => handleInputChange("checkIn", e.target.value)}
+                onBlur={() => handleBlur("checkIn")}
+                error={!!errors.checkIn && touched.checkIn}
+                helperText={touched.checkIn && errors.checkIn}
+                slotProps={{ inputLabel: { shrink: true } }}
+                fullWidth
+              />
 
-            {/* CHECK-IN */}
-            <TextField
-              type="datetime-local"
-              label="Check-in"
-              value={formData.checkIn}
-              onChange={(e) => handleInputChange("checkIn", e.target.value)}
-              onBlur={() => handleBlur("checkIn")}
-              error={!!errors.checkIn && touched.checkIn}
-              helperText={touched.checkIn && errors.checkIn}
-              fullWidth
-              slotProps={{ inputLabel: { shrink: true } }}
-            />
-
-            {/* CHECK-OUT */}
-            <TextField
-              type="datetime-local"
-              label="Check-out"
-              value={formData.checkOut}
-              onChange={(e) => handleInputChange("checkOut", e.target.value)}
-              onBlur={() => handleBlur("checkOut")}
-              error={!!errors.checkOut && touched.checkOut}
-              helperText={touched.checkOut && errors.checkOut}
-              fullWidth
-              slotProps={{ inputLabel: { shrink: true } }}
-            />
+              <TextField
+                type="datetime-local"
+                label="Check-out"
+                value={formData.checkOut}
+                onChange={(e) => handleInputChange("checkOut", e.target.value)}
+                onBlur={() => handleBlur("checkOut")}
+                error={!!errors.checkOut && touched.checkOut}
+                helperText={touched.checkOut && errors.checkOut}
+                slotProps={{ inputLabel: { shrink: true } }}
+                fullWidth
+              />
+            </Box>
 
             {/* TOTAL */}
-
             <TextField
               label="Total (opcional)"
               type="number"
@@ -271,6 +275,7 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
               onBlur={() => handleBlur("status")}
               error={!!errors.status && touched.status}
               helperText={touched.status && errors.status}
+              fullWidth
             >
               {Object.values(StatusReserva).map((s) => (
                 <MenuItem key={s} value={s}>
@@ -282,11 +287,17 @@ export const CriarReservaModal = ({ open, onClose, onSave }: CriarReservaModalPr
         )}
       </DialogContent>
 
-      <DialogActions>
+      <DialogActions sx={{ p: 2 }}>
         <Button onClick={onClose} disabled={loading}>
           Cancelar
         </Button>
-        <Button onClick={handleSubmit} variant="contained" disabled={loading || loadingData}>
+
+        <Button
+          variant="contained"
+          onClick={handleSubmit}
+          disabled={loading || loadingData}
+          sx={{ minWidth: 100 }}
+        >
           {loading ? <CircularProgress size={22} /> : "Salvar"}
         </Button>
       </DialogActions>
